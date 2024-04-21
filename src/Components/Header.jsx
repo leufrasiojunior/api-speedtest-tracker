@@ -1,34 +1,25 @@
 import "bootstrap/dist/css/bootstrap.css";
 import "../styles/styles.css";
+import { Link } from "react-router-dom";
 
 function Header() {
   return (
     <nav className="p-3 text-bg-dark">
       <ul className="nav">
         <li className="nav-item">
-          <a className="nav-link active creme" aria-current="page" href="/">
+          <Link className="nav-link creme" aria-current="page" to="/">
             Home
-          </a>
+          </Link>
         </li>
         <li className="nav-item">
-          <a className="nav-link active creme " aria-current="page" href="#">
-            Active
-          </a>
+          <Link className="nav-link creme " aria-current="page" to="/dashboard">
+            Dashboard
+          </Link>
         </li>
         <li className="nav-item">
-          <a className="nav-link creme" href="#">
-            Link
-          </a>
-        </li>
-        <li className="nav-item">
-          <a className="nav-link creme" href="#">
-            Link
-          </a>
-        </li>
-        <li className="nav-item">
-          <a className="nav-link disabled" aria-disabled="true">
-            Disabled
-          </a>
+          <Link className="nav-link creme" to="/results">
+            Resultados
+          </Link>
         </li>
       </ul>
     </nav>
