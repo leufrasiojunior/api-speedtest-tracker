@@ -1,28 +1,47 @@
-import "bootstrap/dist/css/bootstrap.css";
-import "../styles/styles.css";
 import { Link } from "react-router-dom";
+import "../styles/styles.css";
+import { useState } from "react";
+// import Logo from "../../images/Logo";
+// import { Link } from "react-router-dom";
 
 function Header() {
+  const [active, setActive] = useState(false);
+  function ativar() {
+    setActive(!active);
+    // console.log(active)
+  }
   return (
-    <nav className="p-3 text-bg-dark">
-      <ul className="nav">
-        <li className="nav-item">
-          <Link className="nav-link creme" aria-current="page" to="/">
-            Home
+    <>
+      <header>
+        <nav className="navbar">
+          <Link to="#" className="logo">
+            Speedtest Tracker
           </Link>
-        </li>
-        <li className="nav-item">
-          <Link className="nav-link creme " aria-current="page" to="/dashboard">
-            Dashboard
-          </Link>
-        </li>
-        <li className="nav-item">
-          <Link className="nav-link creme" to="/results">
-            Resultados
-          </Link>
-        </li>
-      </ul>
-    </nav>
+          <ul className={active ? "nav-menu active" : "nav-menu"}>
+            <li className="nav-itens">
+              <Link to="/" className="nav-link">
+                Inicio
+              </Link>
+            </li>
+            <li className="nav-itens">
+              <Link to="/dashboard" className="nav-link">
+                Dashboard
+              </Link>
+            </li>
+            <li className="nav-itens">
+              <Link to="/configs" className="nav-link">
+                Configurações
+              </Link>
+            </li>
+          </ul>
+          <div className="hamburger" onClick={ativar}>
+            <span className="bar"></span>
+            <span className="bar"></span>
+            <span className="bar"></span>
+          </div>
+        </nav>
+      </header>
+    </>
   );
 }
 

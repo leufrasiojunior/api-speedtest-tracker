@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import "../styles/styles.css";
 
 function bpsToMbps(bps) {
   return bps / 1000000;
@@ -14,8 +15,8 @@ function Home() {
       .then((response) => {
         const transformedData = {
           ...response.data,
-          averageDownload: bpsToMbps(response.data.averageDownload * 8), // Convertendo para bits antes de converter para Mbps
-          averageUpload: bpsToMbps(response.data.averageUpload * 8), // Convertendo para bits antes de converter para Mbps
+          averageDownload: bpsToMbps(response.data.averageDownload * 8),
+          averageUpload: bpsToMbps(response.data.averageUpload * 8),
         };
         setData(transformedData);
       })
@@ -24,21 +25,34 @@ function Home() {
 
   return (
     <>
-      <div>
-        <h1>Dados da API</h1>
+      <div className="">
+        <h1>Resumo de Hoje</h1>
         {data ? (
-          <div>
-            <p>
-              <strong>Download Médio:</strong> {data.averageDownload.toFixed(2)}{" "}
-              Mbps
-            </p>
-            <p>
-              <strong>Upload Médio:</strong> {data.averageUpload.toFixed(2)}{" "}
-              Mbps
-            </p>
-            <p>
-              <strong>Ping Médio:</strong> {data.averagePing}
-            </p>
+          <div className="">
+            <div className="">
+              <div>
+                <div className="">
+                  <div className="">Download Médio:</div>
+                  <div className="">
+                    <p className="">{data.averageDownload.toFixed(2)} Mbps</p>
+                  </div>
+                </div>
+
+                <div className="">
+                  <div className="">Upload Médio:</div>
+                  <div className="">
+                    <p className="">{data.averageUpload.toFixed(2)} Mbps</p>
+                  </div>
+                </div>
+
+                <div className="">
+                  <div className="">Ping Médio:</div>
+                  <div className="">
+                    <p className="">{data.averagePing}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         ) : (
           <p>Carregando...</p>
