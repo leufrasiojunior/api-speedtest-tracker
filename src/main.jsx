@@ -7,6 +7,7 @@ import Results from "./Components/Results.jsx";
 import Home from "./Components/Home.jsx";
 import App from "./App.jsx";
 import ErrorPage from "./Components/ErrorPage.jsx";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 const router = createBrowserRouter([
   {

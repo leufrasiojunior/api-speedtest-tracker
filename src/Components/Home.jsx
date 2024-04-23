@@ -1,6 +1,9 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import "../styles/styles.css";
+import Container from "react-bootstrap/Container";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
 
 function bpsToMbps(bps) {
   return bps / 1000000;
@@ -25,39 +28,29 @@ function Home() {
 
   return (
     <>
-      <div className="">
+      <Container>
         <h1>Resumo de Hoje</h1>
         {data ? (
-          <div className="">
-            <div className="">
-              <div>
-                <div className="">
-                  <div className="">Download Médio:</div>
-                  <div className="">
-                    <p className="">{data.averageDownload.toFixed(2)} Mbps</p>
-                  </div>
-                </div>
+          <Row md={3}>
+            <Col>
+              <p>Download Médio:</p>
+              <p>{data.averageDownload.toFixed(2)} Mbps</p>
+            </Col>
 
-                <div className="">
-                  <div className="">Upload Médio:</div>
-                  <div className="">
-                    <p className="">{data.averageUpload.toFixed(2)} Mbps</p>
-                  </div>
-                </div>
+            <Col xs={6}>
+              <div>Upload Médio:</div>
+              <p>{data.averageUpload.toFixed(2)} Mbps</p>
+            </Col>
 
-                <div className="">
-                  <div className="">Ping Médio:</div>
-                  <div className="">
-                    <p className="">{data.averagePing}</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+            <Col>
+              <div>Ping Médio:</div>
+              <p>{data.averagePing}</p>
+            </Col>
+          </Row>
         ) : (
           <p>Carregando...</p>
         )}
-      </div>
+      </Container>
     </>
   );
 }
