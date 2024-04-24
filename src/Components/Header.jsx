@@ -1,45 +1,70 @@
 import { Link } from "react-router-dom";
-import "../styles/styles.css";
-import { useState } from "react";
-// import Logo from "../../images/Logo";
-// import { Link } from "react-router-dom";
+import { Button, Container, Nav, Navbar } from "react-bootstrap";
 
 function Header() {
-  const [active, setActive] = useState(false);
-  function ativar() {
-    setActive(!active);
-    // console.log(active)
-  }
   return (
     <>
       <header>
-        <nav className="navbar">
-          <Link to="#" className="logo">
-            Speedtest Tracker
-          </Link>
-          <ul className={active ? "nav-menu active" : "nav-menu"}>
-            <li className="nav-itens">
-              <Link to="/" className="nav-link">
-                Inicio
-              </Link>
-            </li>
-            <li className="nav-itens">
-              <Link to="/dashboard" className="nav-link">
-                Dashboard
-              </Link>
-            </li>
-            <li className="nav-itens">
-              <Link to="/configs" className="nav-link">
-                Configurações
-              </Link>
-            </li>
-          </ul>
-          <div className="hamburger" onClick={ativar}>
-            <span className="bar"></span>
-            <span className="bar"></span>
-            <span className="bar"></span>
-          </div>
-        </nav>
+        <Navbar bg="dark" variant="dark" className="navbar-dark">
+          <Container>
+            <Navbar.Brand href="#home">Meu Site</Navbar.Brand>
+            <Nav className="me-auto d-flex justify-content-center w-100">
+              <div
+                className="d-flex w-100d-flex flex-column flex-md-row w-100 align-items-center"
+                style={{ maxWidth: "30%" }}
+              >
+                <Button
+                  style={{
+                    flex: "1",
+                    backgroundColor: "#FAFAFA",
+                    color: "#000",
+                    border: "none",
+                    minWidth: "150px",
+                  }}
+                  className="link-no-underline mb-2 mb-md-0 me-1 ms-1"
+                >
+                  <Link to="/=" className="link-no-underline text-color">
+                    Home
+                  </Link>
+                </Button>
+                <Button
+                  style={{
+                    flex: "1",
+                    backgroundColor: "#FAFAFA",
+                    color: "#000",
+                    border: "none",
+                    minWidth: "150px",
+                  }}
+                  className="link-no-underline mx-2 btn mb-2 mb-md-0 me-1 ms-1"
+                >
+                  <Link
+                    to="/dashboard"
+                    className="link-no-underline text-color"
+                  >
+                    Dashboard
+                  </Link>
+                </Button>
+                <Button
+                  style={{
+                    flex: "1",
+                    backgroundColor: "#FAFAFA",
+                    color: "#000",
+                    border: "none",
+                    minWidth: "150px",
+                  }}
+                  className="link-no-underline"
+                >
+                  <Link
+                    to="/dashboard"
+                    className="link-no-underline text-color mb-2 mb-md-0 me-1 ms-1"
+                  >
+                    Configurações
+                  </Link>
+                </Button>
+              </div>
+            </Nav>
+          </Container>
+        </Navbar>
       </header>
     </>
   );

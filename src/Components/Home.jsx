@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import "../styles/styles.css";
+// import "../styles/styles.css";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
+import { Card } from "react-bootstrap";
 
 function bpsToMbps(bps) {
   return bps / 1000000;
@@ -28,23 +29,53 @@ function Home() {
 
   return (
     <>
-      <Container>
-        <h1>Resumo de Hoje</h1>
+      <Container
+        style={{ marginTop: "20px" }}
+        className="align-contents-center"
+      >
         {data ? (
-          <Row md={3}>
-            <Col>
-              <p>Download Médio:</p>
-              <p>{data.averageDownload.toFixed(2)} Mbps</p>
+          <Row xs={1} sm={1} md={3}>
+            <Col style={{ textAlign: "center" }}>
+              <Card
+                style={{
+                  width: "18rem",
+                  textAlign: "center",
+                  marginBottom: "20px",
+                }}
+              >
+                <Card.Header>Download Médio</Card.Header>
+                <Card.Body>
+                  <Card.Text>{data.averageDownload.toFixed(2)} Mbps</Card.Text>
+                </Card.Body>
+              </Card>
             </Col>
-
-            <Col xs={6}>
-              <div>Upload Médio:</div>
-              <p>{data.averageUpload.toFixed(2)} Mbps</p>
-            </Col>
-
             <Col>
-              <div>Ping Médio:</div>
-              <p>{data.averagePing}</p>
+              <Card
+                style={{
+                  width: "18rem",
+                  textAlign: "center",
+                  marginBottom: "20px",
+                }}
+              >
+                <Card.Header>Upload Médio</Card.Header>
+                <Card.Body>
+                  <Card.Text>{data.averageUpload.toFixed(2)} Mbps</Card.Text>
+                </Card.Body>
+              </Card>
+            </Col>
+            <Col>
+              <Card
+                style={{
+                  width: "18rem",
+                  textAlign: "center",
+                  marginBottom: "20px",
+                }}
+              >
+                <Card.Header>Ping Médio</Card.Header>
+                <Card.Body>
+                  <Card.Text>{data.averagePing}</Card.Text>
+                </Card.Body>
+              </Card>
             </Col>
           </Row>
         ) : (
