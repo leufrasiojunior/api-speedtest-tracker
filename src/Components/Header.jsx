@@ -7,12 +7,9 @@ function Header() {
       <header>
         <Navbar bg="dark" variant="dark" className="navbar-dark">
           <Container>
-            <Navbar.Brand href="#home">Meu Site</Navbar.Brand>
-            <Nav className="me-auto d-flex justify-content-center w-100">
-              <div
-                className="d-flex w-100d-flex flex-column flex-md-row w-100 align-items-center"
-                style={{ maxWidth: "30%" }}
-              >
+            <Navbar.Brand href="/">Meu Site</Navbar.Brand>
+            <Nav className="me-auto d-flex justify-content-start w-100">
+              <div className="d-flex w-100d-flex flex-column flex-md-row w-50 align-items-center">
                 <Button
                   style={{
                     flex: "1",
@@ -23,7 +20,7 @@ function Header() {
                   }}
                   className="link-no-underline mb-2 mb-md-0 me-1 ms-1"
                 >
-                  <Link to="/=" className="link-no-underline text-color">
+                  <Link to="/" className="link-no-underline text-color">
                     Home
                   </Link>
                 </Button>
@@ -35,7 +32,7 @@ function Header() {
                     border: "none",
                     minWidth: "150px",
                   }}
-                  className="link-no-underline mx-2 btn mb-2 mb-md-0 me-1 ms-1"
+                  className="link-no-underline btn mb-2 mb-md-0 me-1 ms-1"
                 >
                   <Link
                     to="/dashboard"
@@ -52,13 +49,10 @@ function Header() {
                     border: "none",
                     minWidth: "150px",
                   }}
-                  className="link-no-underline"
+                  className="link-no-underline text-color mb-2 mb-md-0 me-1 ms-1"
                 >
-                  <Link
-                    to="/dashboard"
-                    className="link-no-underline text-color mb-2 mb-md-0 me-1 ms-1"
-                  >
-                    Configurações
+                  <Link to="/results" className="link-no-underline text-color">
+                    Resultados
                   </Link>
                 </Button>
               </div>

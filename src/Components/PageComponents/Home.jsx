@@ -31,7 +31,7 @@ function Home() {
     <>
       <Container
         style={{ marginTop: "20px" }}
-        className="align-contents-center"
+        className="d-flex justify-content-center"
       >
         {data ? (
           <Row xs={1} sm={1} md={3}>
@@ -42,6 +42,7 @@ function Home() {
                   textAlign: "center",
                   marginBottom: "20px",
                 }}
+                className="boxShadow"
               >
                 <Card.Header>Download Médio</Card.Header>
                 <Card.Body>
@@ -56,6 +57,7 @@ function Home() {
                   textAlign: "center",
                   marginBottom: "20px",
                 }}
+                className="boxShadow"
               >
                 <Card.Header>Upload Médio</Card.Header>
                 <Card.Body>
@@ -70,10 +72,11 @@ function Home() {
                   textAlign: "center",
                   marginBottom: "20px",
                 }}
+                className="boxShadow"
               >
                 <Card.Header>Ping Médio</Card.Header>
                 <Card.Body>
-                  <Card.Text>{data.averagePing}</Card.Text>
+                  <Card.Text>{data.averagePing.toFixed(2)} Ms</Card.Text>
                 </Card.Body>
               </Card>
             </Col>

@@ -2,12 +2,13 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
-import Dashboard from "./Components/Dashboard.jsx";
-import Results from "./Components/Results.jsx";
-import Home from "./Components/Home.jsx";
 import App from "./App.jsx";
-import ErrorPage from "./Components/ErrorPage.jsx";
 import "bootstrap/dist/css/bootstrap.min.css";
+// import Home from "./Routes/Home.jsx";
+import Dashboard from "./Routes/Dashboard.jsx";
+import Results from "./Routes/Results.jsx";
+import ErrorPage from "./Routes/ErrorPage.jsx";
+import StartPage from "./Routes/StartPage.jsx";
 
 const router = createBrowserRouter([
   {
@@ -17,7 +18,7 @@ const router = createBrowserRouter([
     children: [
       {
         path: "/",
-        element: <Home />,
+        element: <StartPage />,
       },
       {
         path: "/dashboard",
