@@ -1,5 +1,11 @@
+import TableData from "../Components/PageComponents/TableData";
+
 function Results() {
-  return <div>Results</div>;
+  return (
+    <>
+      <TableData />
+    </>
+  );
 }
 
 export default Results;
