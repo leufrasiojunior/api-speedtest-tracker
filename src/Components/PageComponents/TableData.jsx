@@ -11,6 +11,7 @@ function bpsToMbps(bps) {
 const App = () => {
   const [data, setData] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
+  const [totalRows, setTotalRows] = useState(0);
   const [pageSize, setPageSize] = useState(15);
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedRecord, setSelectedRecord] = useState(null);
@@ -25,6 +26,7 @@ const App = () => {
         );
         setData(response.data.data);
         setTotalPages(response.data.totalPages);
+        setTotalRows(response.data.totalRows);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -42,7 +44,7 @@ const App = () => {
   };
 
   const handleRowClick = async (id, event) => {
-    if (event.target.type === "checkbox") {
+    if (event.target.type === "checkbox" || event.target.id === "box") {
       return;
     }
     setOpenModal(!openModal);
@@ -115,21 +117,41 @@ const App = () => {
   };
 
   const startIndex = (currentPage - 1) * pageSize + 1;
-  const endIndex = Math.min(currentPage * pageSize);
+  const endIndex = Math.min(currentPage * pageSize, totalRows);
 
-  const exportToCsv = () => {
-    let exportData = [];
-    if (selectedItems.length > 0) {
-      exportData = data.filter((item) => selectedItems.includes(item.id));
-    } else {
-      exportData = data;
+  const exportToCsv = async () => {
+    try {
+      let exportData;
+      if (selectedItems.length > 0) {
+        // Se houver itens selecionados, exporta apenas esses itens
+        exportData = data.filter((item) => selectedItems.includes(item.id));
+      } else {
+        // Se não houver itens selecionados, solicita todos os dados da tabela à API
+        const response = await axios.get(`http://localhost:3000/allresults`);
+        exportData = response.data;
+      }
+
+      let csvContent = "";
+
+      // Adiciona a linha de cabeçalho com os nomes das colunas
+      const headerRow = Object.keys(exportData[0]).join(";");
+      csvContent += headerRow + "\n";
+
+      // Adiciona os dados
+      exportData.forEach((row) => {
+        const rowData = Object.values(row).map((value) => {
+          // Converte todos os valores para string
+          return JSON.stringify(value);
+        });
+        csvContent += rowData.join(";") + "\n";
+      });
+
+      // Cria e salva o arquivo CSV
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8" });
+      saveAs(blob, "data.csv");
+    } catch (error) {
+      console.error("Error exporting data:", error);
     }
-
-    const csvContent =
-      "data:text/csv;charset=utf-8," +
-      exportData.map((row) => Object.values(row).join(",")).join("\n");
-    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8" });
-    saveAs(blob, "data.csv");
   };
 
   return (
@@ -202,7 +224,10 @@ const App = () => {
                         onClick={() => handleRowClick(item.id, event)}
                         style={{ cursor: "pointer" }}
                       >
-                        <td>
+                        <td
+                          id="box"
+                          onClick={() => handleCheckboxChange(item.id)}
+                        >
                           <input
                             type="checkbox"
                             checked={selectedItems.includes(item.id)}
@@ -210,7 +235,10 @@ const App = () => {
                           />
                         </td>
                         <td>{item.id}</td>
-                        <td>{item.ping}</td>
+                        <td>
+                          {item.ping !== null ? item.ping.toFixed(3) : ""}
+                        </td>
+
                         <td>{bpsToMbps(item.download * 8).toFixed(2)} Mbps</td>
                         <td>{bpsToMbps(item.upload * 8).toFixed(2)} Mbps</td>
                         <td>{item.status}</td>
@@ -235,7 +263,7 @@ const App = () => {
             <Row className="align-items-center">
               <div className="col-sm-12 col-md-5">
                 <div className="dataTables_info col">
-                  Showing {startIndex} to {endIndex} of {totalPages} results
+                  Showing {startIndex} to {endIndex} of {totalRows} results
                 </div>
               </div>
               <div className="col-sm-12 col-md-7 dataTables_paginate ">
@@ -254,7 +282,7 @@ const App = () => {
                   <button
                     className="btn btn-primary active"
                     onClick={() =>
-                      handlePageChange(Math.min(currentPage + 1, totalPages))
+                      handlePageChange(Math.min(currentPage + 20, totalPages))
                     }
                     disabled={currentPage >= totalPages}
                   >
