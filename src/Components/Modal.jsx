@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 const BG_STYLE = {
   position: "fixed",
   top: "0",
@@ -10,7 +11,7 @@ const BG_STYLE = {
 
 const MD_STYLE = {
   position: "fixed",
-  top: "50%",
+  top: "30%",
   left: "50%",
   transform: "translate(-50%, -50%)",
   padding: "150px",
@@ -18,11 +19,26 @@ const MD_STYLE = {
   borderRadius: "20px",
 };
 // eslint-disable-next-line react/prop-types
-function Modal({ isOpen, children }) {
-  if (isOpen) {
+function Modal({ isOpen, requestData, onClose }) {
+  const handleCloseModal = (event) => {
+    // Verifica se o clique ocorreu dentro do modal
+    if (event.target === event.currentTarget) {
+      onClose();
+    }
+  };
+  if (isOpen && requestData) {
+    const { download } = requestData;
     return (
-      <div style={BG_STYLE}>
-        <div style={MD_STYLE}>{children}</div>
+      <div style={BG_STYLE} onClick={handleCloseModal}>
+        <div style={MD_STYLE}>
+          <div>
+            <p>Jitter: {download.bandwidth}</p>
+            <p>Latency: {download.bytes}</p>
+            <p>Low: {download.elapsed}</p>
+            <p>High: {download.latency.iqm}</p>
+            <button onClick={onClose}>Fechar</button>
+          </div>
+        </div>
       </div>
     );
   }

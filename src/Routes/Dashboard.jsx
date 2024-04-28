@@ -9,7 +9,9 @@ function Dashboard() {
     <>
       {/* <PingData /> */}
       <button onClick={() => setOpenModal(!openModal)}>Abrir Modal</button>
-      <Modal isOpen={openModal}>asdadasdasdasdasd</Modal>
+      <Modal isOpen={openModal}>
+        <button onClick={() => setOpenModal(!openModal)}>Fechar Modal</button>
+      </Modal>
     </>
   );
 }
