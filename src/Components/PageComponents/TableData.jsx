@@ -219,7 +219,6 @@ const App = () => {
             </Row>
             <Row className="col-sm-12">
               <table
-                // className="table table-striped table-bordered table-hover m-1"
                 className="table table-striped table-bordered dataTable no-footer table-hover text-center"
                 style={{ width: "100%" }}
               >
@@ -328,7 +327,6 @@ const App = () => {
                   </button>
                 </div>
               </div>
-              {/* </div> */}
             </Row>
             <Modal
               isOpen={openModal}
