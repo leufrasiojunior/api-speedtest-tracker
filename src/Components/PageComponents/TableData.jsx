@@ -17,6 +17,7 @@ const App = () => {
   const [selectedRecord, setSelectedRecord] = useState(null);
   const [openModal, setOpenModal] = useState(false);
   const [selectedItems, setSelectedItems] = useState([]);
+  const [selectAll, setSelectAll] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -56,11 +57,22 @@ const App = () => {
     }
   };
 
-  const handleCheckboxChange = (id) => {
-    if (selectedItems.includes(id)) {
-      setSelectedItems(selectedItems.filter((item) => item !== id));
+  const handleCheckboxChange = (id, event) => {
+    if (id === "selectAll") {
+      if (event.target.checked) {
+        const allIds = data.map((item) => item.id);
+        setSelectedItems(allIds);
+      } else {
+        setSelectedItems([]);
+      }
+      setSelectAll(event.target.checked);
     } else {
-      setSelectedItems([...selectedItems, id]);
+      if (selectedItems.includes(id)) {
+        setSelectedItems(selectedItems.filter((item) => item !== id));
+      } else {
+        setSelectedItems([...selectedItems, id]);
+      }
+      setSelectAll(selectedItems.length === data.length - 1);
     }
   };
 
@@ -159,10 +171,9 @@ const App = () => {
       <Container className="col-lg-10 mx-auto">
         <Container className="card-body p-5 bg-white rounded">
           <h1>All Results</h1>
-          <button onClick={exportToCsv}>Export as CSV</button>
           <Container className="table-responsive">
-            <Row>
-              <div className="col-sm-12 col-md-6 row mb-2">
+            <Row style={{ paddingRight: "13px" }} className="mb-2">
+              <div className="col-sm-12 col-md-6">
                 <div
                   style={{
                     display: "flex",
@@ -197,6 +208,14 @@ const App = () => {
                   </label>
                 </div>
               </div>
+              <div className="col-sm-12 col-md-6 d-flex justify-content-end">
+                <button
+                  className="btn btn-secondary buttons-copy buttons-html5"
+                  onClick={exportToCsv}
+                >
+                  Export as CSV
+                </button>
+              </div>
             </Row>
             <Row className="col-sm-12">
               <table
@@ -206,7 +225,21 @@ const App = () => {
               >
                 <thead className="thead-light">
                   <tr role="row">
-                    <th>Select</th>
+                    <th
+                      onClick={() =>
+                        handleCheckboxChange("selectAll", {
+                          target: { checked: !selectAll },
+                        })
+                      }
+                    >
+                      <input
+                        type="checkbox"
+                        checked={selectAll}
+                        onChange={(event) =>
+                          handleCheckboxChange("selectAll", event)
+                        }
+                      />
+                    </th>
                     <th>Id</th>
                     <th>Ping/ms</th>
                     <th>Download/Mbps</th>
@@ -221,17 +254,21 @@ const App = () => {
                     data.map((item, index) => (
                       <tr
                         key={index}
-                        onClick={() => handleRowClick(item.id, event)}
+                        onClick={(event) => handleRowClick(item.id, event)}
                         style={{ cursor: "pointer" }}
                       >
                         <td
                           id="box"
-                          onClick={() => handleCheckboxChange(item.id)}
+                          onClick={(event) =>
+                            handleCheckboxChange(item.id, event)
+                          }
                         >
                           <input
                             type="checkbox"
                             checked={selectedItems.includes(item.id)}
-                            onChange={() => handleCheckboxChange(item.id)}
+                            onChange={(event) =>
+                              handleCheckboxChange(item.id, event)
+                            }
                           />
                         </td>
                         <td>{item.id}</td>
@@ -280,6 +317,7 @@ const App = () => {
                   </button>
                   {renderPagination()}
                   <button
+                    style={{ marginRight: "10px" }}
                     className="btn btn-primary active"
                     onClick={() =>
                       handlePageChange(Math.min(currentPage + 20, totalPages))
