@@ -3,10 +3,14 @@ import axios from "axios";
 import Modal from "../Modal";
 import { Container, Row } from "react-bootstrap";
 
+function bpsToMbps(bps) {
+  return bps / 1000000;
+}
+
 const App = () => {
   const [data, setData] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
-  const [pageSize, setPageSize] = useState(5);
+  const [pageSize, setPageSize] = useState(15);
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedRecord, setSelectedRecord] = useState(null);
   const [openModal, setOpenModal] = useState(false);
@@ -84,6 +88,19 @@ const App = () => {
     return pages;
   };
 
+  const formatCreatedAt = (createdAt) => {
+    const date = new Date(createdAt);
+    const formattedDate = `${date.toLocaleDateString("pt-BR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "2-digit",
+    })} ${date.toLocaleTimeString("pt-BR", {
+      hour: "2-digit",
+      minute: "2-digit",
+    })}`;
+    return formattedDate;
+  };
+
   const startIndex = (currentPage - 1) * pageSize + 1;
   const endIndex = Math.min(currentPage * pageSize);
 
@@ -115,7 +132,7 @@ const App = () => {
                         marginLeft: "7px",
                         marginRight: "7px",
                         paddingLeft: "8px",
-                        paddingRight: "8px",
+                        paddingRight: "24px",
                         width: "49px !important",
                       }}
                     >
@@ -139,9 +156,9 @@ const App = () => {
                 <thead className="thead-light">
                   <tr role="row">
                     <th>Id</th>
-                    <th>Ping</th>
-                    <th>Download</th>
-                    <th>Upload</th>
+                    <th>Ping/ms</th>
+                    <th>Download/Mbps</th>
+                    <th>Upload/Mbps</th>
                     <th>Status</th>
                     <th>Created At</th>
                     <th>Scheduled</th>
@@ -156,11 +173,11 @@ const App = () => {
                         style={{ cursor: "pointer" }}
                       >
                         <td>{item.id}</td>
-                        <td>{item.ping}</td>
-                        <td>{item.download}</td>
-                        <td>{item.upload}</td>
+                        <td>{item.ping.toFixed(2)}</td>
+                        <td>{bpsToMbps(item.download * 8).toFixed(2)} Mbps</td>
+                        <td>{bpsToMbps(item.upload * 8).toFixed(2)} Mbps</td>
                         <td>{item.status}</td>
-                        <td>{item.created_at}</td>
+                        <td>{formatCreatedAt(item.created_at)}</td>
                         <td>
                           {item.scheduled === 1 ? (
                             <div
@@ -198,7 +215,7 @@ const App = () => {
                   </button>
                   {renderPagination()}
                   <button
-                    className="btn btn-primary active marginLeft"
+                    className="btn btn-primary active"
                     onClick={() =>
                       handlePageChange(Math.min(currentPage + 1, totalPages))
                     }
