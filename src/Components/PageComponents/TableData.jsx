@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import Modal from "../Modal";
 import { Container, Row } from "react-bootstrap";
+import { saveAs } from "file-saver";
 
 function bpsToMbps(bps) {
   return bps / 1000000;
@@ -14,6 +15,7 @@ const App = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedRecord, setSelectedRecord] = useState(null);
   const [openModal, setOpenModal] = useState(false);
+  const [selectedItems, setSelectedItems] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -39,13 +41,24 @@ const App = () => {
     setCurrentPage(page);
   };
 
-  const handleRowClick = async (id) => {
+  const handleRowClick = async (id, event) => {
+    if (event.target.type === "checkbox") {
+      return;
+    }
     setOpenModal(!openModal);
     try {
       const response = await axios.get(`http://localhost:3000/specified/${id}`);
       setSelectedRecord(response.data.data);
     } catch (error) {
       console.error("Error fetching record details:", error);
+    }
+  };
+
+  const handleCheckboxChange = (id) => {
+    if (selectedItems.includes(id)) {
+      setSelectedItems(selectedItems.filter((item) => item !== id));
+    } else {
+      setSelectedItems([...selectedItems, id]);
     }
   };
 
@@ -104,11 +117,27 @@ const App = () => {
   const startIndex = (currentPage - 1) * pageSize + 1;
   const endIndex = Math.min(currentPage * pageSize);
 
+  const exportToCsv = () => {
+    let exportData = [];
+    if (selectedItems.length > 0) {
+      exportData = data.filter((item) => selectedItems.includes(item.id));
+    } else {
+      exportData = data;
+    }
+
+    const csvContent =
+      "data:text/csv;charset=utf-8," +
+      exportData.map((row) => Object.values(row).join(",")).join("\n");
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8" });
+    saveAs(blob, "data.csv");
+  };
+
   return (
     <Container className="py-5">
       <Container className="col-lg-10 mx-auto">
         <Container className="card-body p-5 bg-white rounded">
           <h1>All Results</h1>
+          <button onClick={exportToCsv}>Export as CSV</button>
           <Container className="table-responsive">
             <Row>
               <div className="col-sm-12 col-md-6 row mb-2">
@@ -155,6 +184,7 @@ const App = () => {
               >
                 <thead className="thead-light">
                   <tr role="row">
+                    <th>Select</th>
                     <th>Id</th>
                     <th>Ping/ms</th>
                     <th>Download/Mbps</th>
@@ -169,11 +199,18 @@ const App = () => {
                     data.map((item, index) => (
                       <tr
                         key={index}
-                        onClick={() => handleRowClick(item.id)}
+                        onClick={() => handleRowClick(item.id, event)}
                         style={{ cursor: "pointer" }}
                       >
+                        <td>
+                          <input
+                            type="checkbox"
+                            checked={selectedItems.includes(item.id)}
+                            onChange={() => handleCheckboxChange(item.id)}
+                          />
+                        </td>
                         <td>{item.id}</td>
-                        <td>{item.ping.toFixed(2)}</td>
+                        <td>{item.ping}</td>
                         <td>{bpsToMbps(item.download * 8).toFixed(2)} Mbps</td>
                         <td>{bpsToMbps(item.upload * 8).toFixed(2)} Mbps</td>
                         <td>{item.status}</td>
