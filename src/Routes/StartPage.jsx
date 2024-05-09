@@ -4,6 +4,8 @@ import PingResults from "../Components/PageComponents/PingResults";
 import UploadResults from "../Components/PageComponents/UploadResults";
 
 function StartPage() {
+  document.title = "Home - Dashboard SpeedTest Tracker";
+
   return (
     <>
       <Home />
