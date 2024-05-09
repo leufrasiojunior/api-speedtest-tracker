@@ -1,5 +1,6 @@
 import { useState } from "react";
-import Modal from "../Components/Modal";
+// import Modal from "../Components/Modal";
+import MydModalWithGrid from "../Components/TestModal";
 // import PingData from "../Components/PageComponents/ComponentsDashboard/PingData";
 
 function Dashboard() {
@@ -9,9 +10,7 @@ function Dashboard() {
     <>
       {/* <PingData /> */}
       <button onClick={() => setOpenModal(!openModal)}>Abrir Modal</button>
-      <Modal isOpen={openModal}>
-        <button onClick={() => setOpenModal(!openModal)}>Fechar Modal</button>
-      </Modal>
+      <MydModalWithGrid show={openModal} onHide={() => setOpenModal(false)} />
     </>
   );
 }

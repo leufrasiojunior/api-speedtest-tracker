@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import Modal from "../Modal";
+import ModalCustom from "../Modal";
 import { Container, Row } from "react-bootstrap";
 import { saveAs } from "file-saver";
+// import MydModalWithGrid from "../TestModal";
 
 function bpsToMbps(bps) {
   return bps / 1000000;
@@ -15,15 +16,17 @@ const App = () => {
   const [pageSize, setPageSize] = useState(15);
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedRecord, setSelectedRecord] = useState(null);
-  const [openModal, setOpenModal] = useState(false);
+  // const [openModal, setOpenModal] = useState(false);
   const [selectedItems, setSelectedItems] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
+  const [id, setId] = useState();
+  const [modalShow, setModalShow] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:3000/list?pageSize=${pageSize}&page=${currentPage}`
+          `http://192.168.31.23:4000/list?pageSize=${pageSize}&page=${currentPage}`
         );
         setData(response.data.data);
         setTotalPages(response.data.totalPages);
@@ -48,10 +51,13 @@ const App = () => {
     if (event.target.type === "checkbox" || event.target.id === "box") {
       return;
     }
-    setOpenModal(!openModal);
+    setModalShow(true);
+    setId(id);
     try {
-      const response = await axios.get(`http://localhost:3000/specified/${id}`);
-      setSelectedRecord(response.data.data);
+      const response = await axios.get(
+        `http://192.168.31.23:4000/specified/${id}`
+      );
+      setSelectedRecord(response.data);
     } catch (error) {
       console.error("Error fetching record details:", error);
     }
@@ -139,7 +145,9 @@ const App = () => {
         exportData = data.filter((item) => selectedItems.includes(item.id));
       } else {
         // Se não houver itens selecionados, solicita todos os dados da tabela à API
-        const response = await axios.get(`http://localhost:3000/allresults`);
+        const response = await axios.get(
+          `http://192.168.31.23:4000/allresults`
+        );
         exportData = response.data;
       }
 
@@ -328,10 +336,11 @@ const App = () => {
                 </div>
               </div>
             </Row>
-            <Modal
-              isOpen={openModal}
-              requestData={selectedRecord}
-              onClose={() => setOpenModal(!openModal)}
+            <ModalCustom
+              show={modalShow}
+              onHide={() => setModalShow(false)}
+              data={selectedRecord}
+              id={id}
             />
           </Container>
         </Container>

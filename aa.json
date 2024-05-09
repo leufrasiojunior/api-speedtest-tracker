@@ -1,0 +1,55 @@
+{
+    "type": "result",
+    "timestamp": "2024-05-08T20:59:11Z",
+    "ping": {
+        "jitter": 0.248,
+        "latency": 4.535,
+        "low": 4.324,
+        "high": 4.941
+    },
+    "download": {
+        "bandwidth": 89806326,
+        "bytes": 1046791087,
+        "elapsed": 12516,
+        "latency": {
+            "iqm": 7.801,
+            "low": 4.026,
+            "high": 25.648,
+            "jitter": 2.646
+        }
+    },
+    "upload": {
+        "bandwidth": 40221800,
+        "bytes": 556490561,
+        "elapsed": 12715,
+        "latency": {
+            "iqm": 5.300,
+            "low": 3.887,
+            "high": 240.024,
+            "jitter": 11.461
+        }
+    },
+    "packetLoss": 0,
+    "isp": "Vivo",
+    "interface": {
+        "internalIp": "192.168.31.23",
+        "name": "enp1s0",
+        "macAddr": "52:54:00:4C:92:8F",
+        "isVpn": false,
+        "externalIp": "177.9.219.90"
+    },
+    "server": {
+        "id": 52397,
+        "host": "stmc.hbnets.com.br",
+        "port": 8080,
+        "name": "HBNets",
+        "location": "São Paulo",
+        "country": "Brazil",
+        "ip": "45.183.240.114"
+    },
+    "result": {
+        "id": "97292af5-00cc-4e4f-a4ec-4d005a95059f",
+        "url": "https://www.speedtest.net/result/c/97292af5-00cc-4e4f-a4ec-4d005a95059f",
+        "persisted": true
+    }
+}

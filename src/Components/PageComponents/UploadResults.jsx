@@ -17,7 +17,9 @@ function UploadResults() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/allresults");
+        const response = await axios.get(
+          "http://192.168.31.23:4000/allresults"
+        );
         const data = response.data;
         let intervalData = [];
         let totalUpload = 0;

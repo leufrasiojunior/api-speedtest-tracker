@@ -15,7 +15,7 @@ function Home() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:3000/averages")
+      .get("http://192.168.31.23:4000/averages")
       .then((response) => {
         const transformedData = {
           ...response.data,

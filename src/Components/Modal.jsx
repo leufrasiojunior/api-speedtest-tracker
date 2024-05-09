@@ -1,48 +1,226 @@
 /* eslint-disable react/prop-types */
-const BG_STYLE = {
-  position: "fixed",
-  top: "0",
-  bottom: "0",
-  left: "0",
-  right: "0",
-  backgroundColor: "rgb(0,0,0,0.2)",
-  zIndex: "1000",
-};
+import { Col, Container, Row, Button, Modal, Card } from "react-bootstrap";
 
-const MD_STYLE = {
-  position: "fixed",
-  top: "30%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  padding: "150px",
-  backgroundColor: "white",
-  borderRadius: "20px",
-};
-// eslint-disable-next-line react/prop-types
-function Modal({ isOpen, requestData, onClose }) {
-  const handleCloseModal = (event) => {
-    // Verifica se o clique ocorreu dentro do modal
-    if (event.target === event.currentTarget) {
-      onClose();
-    }
-  };
-  if (isOpen && requestData) {
-    const { download } = requestData;
+function bpsToMbps(bps) {
+  return (bps / 125000).toFixed(2);
+}
+
+function ModalCustom({ show, onHide, data, id }) {
+  if (data) {
+    const { upload, download, ping, server } = data;
     return (
-      <div style={BG_STYLE} onClick={handleCloseModal}>
-        <div style={MD_STYLE}>
-          <div>
-            <p>Jitter: {download.bandwidth}</p>
-            <p>Latency: {download.bytes}</p>
-            <p>Low: {download.elapsed}</p>
-            <p>High: {download.latency.iqm}</p>
-            <button onClick={onClose}>Fechar</button>
-          </div>
-        </div>
-      </div>
+      <>
+        <Modal
+          show={show}
+          aria-labelledby="contained-modal-title-vcenter"
+          size="xl"
+          onHide={onHide}
+        >
+          <Modal.Header closeButton>
+            <Modal.Title id="contained-modal-title-vcenter">#{id}</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Container className="d-flex w-auto">
+              <Row className="col-8 d-flex">
+                <Col className="col-10 d-flex gap-4 flex-column justify-content-start align-items-center align-content-center flex-wrap text-start ">
+                  <Row xs={12} md={12}>
+                    <Container>
+                      <div>
+                        <div>
+                          <span>Download</span>
+                        </div>
+                        <div>
+                          <input
+                            className="form-control"
+                            type="text"
+                            value={bpsToMbps(download.bandwidth)}
+                            readOnly
+                          ></input>
+                        </div>
+                      </div>
+                      <div>
+                        <div>
+                          <span>Upload</span>
+                        </div>
+                        <div>
+                          <input
+                            className="form-control"
+                            type="text"
+                            value={bpsToMbps(upload.bandwidth)}
+                            readOnly
+                          ></input>
+                        </div>
+                      </div>
+                      <div>
+                        <div>
+                          <span>Ping</span>
+                        </div>
+                        <div>
+                          <input
+                            className="form-control"
+                            type="text"
+                            value={ping.latency}
+                            readOnly
+                          ></input>
+                        </div>
+                      </div>
+                    </Container>
+                  </Row>
+                  <Row xs={12} md={12}>
+                    <Container>
+                      <div>
+                        <div>
+                          <span>Download Jitter (ms)</span>
+                        </div>
+                        <div>
+                          <input
+                            className="form-control"
+                            type="text"
+                            value={download.latency.jitter}
+                            readOnly
+                          ></input>
+                        </div>
+                      </div>
+                      <div>
+                        <div>
+                          <span>Download Latency High</span>
+                        </div>
+                        <div>
+                          <input
+                            className="form-control"
+                            type="text"
+                            value={download.latency.high}
+                            readOnly
+                          ></input>
+                        </div>
+                      </div>
+                      <div>
+                        <div>
+                          <span>Download Latency low</span>
+                        </div>
+                        <div>
+                          <input
+                            className="form-control"
+                            type="text"
+                            value={download.latency.low}
+                            readOnly
+                          ></input>
+                        </div>
+                      </div>
+                    </Container>
+                  </Row>
+                  <Row xs={12} md={12}>
+                    <Container>
+                      <div>
+                        <div>
+                          <span>Download Latency iqm</span>
+                        </div>
+                        <div>
+                          <input
+                            className="form-control"
+                            type="text"
+                            value={download.latency.jitter}
+                            readOnly
+                          ></input>
+                        </div>
+                      </div>
+                      <div>
+                        <div>
+                          <span>Upload Jitter (ms)</span>
+                        </div>
+                        <div>
+                          <input
+                            className="form-control"
+                            type="text"
+                            value={upload.latency.jitter}
+                            readOnly
+                          ></input>
+                        </div>
+                      </div>
+                      <div>
+                        <div>
+                          <span>Upload Latency High</span>
+                        </div>
+                        <div>
+                          <input
+                            className="form-control"
+                            type="text"
+                            value={upload.latency.high}
+                            readOnly
+                          ></input>
+                        </div>
+                      </div>
+                    </Container>
+                  </Row>
+                  <Row xs={12} md={12}>
+                    <Container>
+                      <div>
+                        <div>
+                          <span>Upload Latency low</span>
+                        </div>
+                        <div>
+                          <input
+                            className="form-control"
+                            type="text"
+                            value={upload.latency.low}
+                            readOnly
+                          ></input>
+                        </div>
+                      </div>
+                      <div>
+                        <div>
+                          <span>Upload Latency iqm</span>
+                        </div>
+                        <div>
+                          <input
+                            className="form-control"
+                            type="text"
+                            value={upload.latency.iqm}
+                            readOnly
+                          ></input>
+                        </div>
+                      </div>
+                      <div>
+                        <div>
+                          <span>Ping Jitter (ms)</span>
+                        </div>
+                        <div>
+                          <input
+                            className="form-control"
+                            type="text"
+                            value={ping.jitter}
+                            readOnly
+                          ></input>
+                        </div>
+                      </div>
+                    </Container>
+                  </Row>
+                </Col>
+              </Row>
+              <Col className="col-4">
+                <Card className="w-auto">
+                  <Card.Body>
+                    <Card.Title>Server</Card.Title>
+                    <Card.Text>
+                      <Col>
+                        <li>Server ID: {server.id}</li>
+                        <li>Name: {server.name}</li>
+                        <li>Host: {server.host}</li>
+                      </Col>
+                    </Card.Text>
+                  </Card.Body>
+                </Card>
+              </Col>
+            </Container>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button onClick={onHide}>Close</Button>
+          </Modal.Footer>
+        </Modal>
+      </>
     );
   }
   return null;
 }
 
-export default Modal;
+export default ModalCustom;
