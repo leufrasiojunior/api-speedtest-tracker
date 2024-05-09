@@ -10,6 +10,7 @@ import Results from "./Routes/Results.jsx";
 import ErrorPage from "./Routes/ErrorPage.jsx";
 import StartPage from "./Routes/StartPage.jsx";
 
+
 const router = createBrowserRouter([
   {
     path: "/",
