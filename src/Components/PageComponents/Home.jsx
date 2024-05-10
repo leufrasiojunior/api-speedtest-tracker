@@ -1,10 +1,9 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
-// import "../styles/styles.css";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import { Card } from "react-bootstrap";
+import api from "../AxiosConnect/AxiosConnect";
 
 function bpsToMbps(bps) {
   return bps / 1000000;
@@ -14,8 +13,8 @@ function Home() {
   const [data, setData] = useState(null);
 
   useEffect(() => {
-    axios
-      .get("http://192.168.31.23:4000/averages")
+    api
+      .get("/averages")
       .then((response) => {
         const transformedData = {
           ...response.data,

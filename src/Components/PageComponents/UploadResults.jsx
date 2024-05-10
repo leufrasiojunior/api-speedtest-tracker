@@ -1,9 +1,9 @@
 /* eslint-disable no-case-declarations */
 import { useState, useEffect } from "react";
 import { Chart } from "react-google-charts";
-import axios from "axios";
 import { Container } from "react-bootstrap";
 import Loader from "../Spinner";
+import api from "../AxiosConnect/AxiosConnect";
 
 function bpsToMBps(bps) {
   return bps / 1000000;
@@ -17,9 +17,7 @@ function UploadResults() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(
-          "http://192.168.31.23:4000/allresults"
-        );
+        const response = await api.get("/allresults");
         const data = response.data;
         let intervalData = [];
         let totalUpload = 0;

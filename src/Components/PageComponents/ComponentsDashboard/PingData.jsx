@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../AxiosConnect/AxiosConnect";
 import { Chart } from "react-google-charts";
 
 function PingChart({ pingData }) {
@@ -48,7 +48,7 @@ function PingChartPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("http://192.168.31.23:4000/fulldata");
+        const response = await api.get("/fulldata");
         setPingData(response.data);
         setIsLoading(false);
       } catch (error) {
