@@ -17,7 +17,7 @@ function DownloadResults() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await api.get("/allresults");
+        const response = await api.get("/downloads");
         const data = response.data;
         let intervalData = [];
         let totalDownload = 0;
@@ -30,10 +30,10 @@ function DownloadResults() {
               today.getTime() - 24 * 60 * 60 * 1000
             );
             const filteredData = data.filter(
-              (item) => new Date(item.created_at) >= twentyFourHoursAgo
+              (item) => new Date(item.date) >= twentyFourHoursAgo
             );
             filteredData.forEach((item) => {
-              const itemDate = new Date(item.created_at);
+              const itemDate = new Date(item.date);
               const formattedHour = `${itemDate.getHours()}:${
                 itemDate.getMinutes() < 10 ? "0" : ""
               }${itemDate.getMinutes()}`;
@@ -55,15 +55,16 @@ function DownloadResults() {
             const startDate = new Date(todayDate);
             startDate.setDate(todayDate.getDate() - numDays + 1);
             const filteredDaysData = data.filter((item) => {
-              const itemDate = new Date(item.created_at);
+              const itemDate = new Date(item.date);
+              console.log(itemDate);
               return itemDate >= startDate && itemDate <= todayDate;
             });
             const daysData = {};
             filteredDaysData.forEach((item) => {
-              const itemDate = new Date(item.created_at).toLocaleDateString(
-                "pt-BR",
-                { day: "2-digit", month: "2-digit" }
-              );
+              const itemDate = new Date(item.date).toLocaleDateString("pt-BR", {
+                day: "2-digit",
+                month: "2-digit",
+              });
               if (!daysData[itemDate]) {
                 daysData[itemDate] = { sum: 0, count: 0 };
               }

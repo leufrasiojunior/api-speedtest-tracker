@@ -4,6 +4,7 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import { Card } from "react-bootstrap";
 import api from "../AxiosConnect/AxiosConnect";
+import Loader from "../Spinner";
 
 function bpsToMbps(bps) {
   return bps / 1000000;
@@ -81,7 +82,7 @@ function Home() {
             </Col>
           </Row>
         ) : (
-          <p>Carregando...</p>
+          <Loader />
         )}
       </Container>
     </>
