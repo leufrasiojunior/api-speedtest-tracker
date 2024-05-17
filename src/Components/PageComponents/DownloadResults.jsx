@@ -1,173 +1,192 @@
-/* eslint-disable no-case-declarations */
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { Chart } from "react-google-charts";
+import api from "../AxiosConnect/AxiosConnect";
+import DatePicker from "react-datepicker";
+import Select from "react-select";
+import moment from "moment-timezone";
+import "react-datepicker/dist/react-datepicker.css";
 import { Container } from "react-bootstrap";
 import Loader from "../Spinner";
-import api from "../AxiosConnect/AxiosConnect";
 
-function bpsToMBps(bps) {
-  return bps / 1000000;
-}
+const Grafico = () => {
+  const [dados, setDados] = useState([]);
+  const [dataInicio, setDataInicio] = useState(new Date());
+  const [dataFim, setDataFim] = useState(new Date());
+  const [fusoHorario, setFusoHorario] = useState("UTC");
+  const [carregando, setCarregando] = useState(false);
+  const [erro, setErro] = useState(null);
+  const [numResultados, setNumResultados] = useState(10);
 
-function DownloadResults() {
-  const [chartData, setChartData] = useState([]);
-  const [selectedInterval, setSelectedInterval] = useState("24h");
-  const [averageDownload, setaverageDownload] = useState(null);
+  const buscarDados = useCallback(async () => {
+    setCarregando(true);
+    setErro(null);
+    try {
+      const dataAtual = moment();
+      const diferencaUTCMinutos = dataAtual.utcOffset();
+
+      const dataInicioUTC = moment(dataInicio)
+        .startOf("day")
+        .subtract(diferencaUTCMinutos, "minutes");
+
+      const dataFimUTC = moment(dataFim).subtract(
+        diferencaUTCMinutos,
+        "minutes"
+      );
+
+      const dataInicioFormatada = dataInicioUTC.format(
+        "YYYY-MM-DDTHH:mm:ss.SSSZ"
+      );
+      const dataFimFormatada = dataFimUTC.format("YYYY-MM-DDTHH:mm:ss.SSSZ");
+      const dataAtualFormatada = dataAtual
+        .subtract(diferencaUTCMinutos, "minutes")
+        .format("YYYY-MM-DDTHH:mm:ss.SSSZ");
+
+      const resposta = await api.get("/dados", {
+        params: {
+          inicio: dataInicioFormatada,
+          fim: dataFimFormatada,
+          horaAtual: dataAtualFormatada,
+        },
+      });
+
+      setDados(resposta.data);
+    } catch (erro) {
+      setErro("Erro ao buscar dados. Tente novamente mais tarde.");
+    } finally {
+      setCarregando(false);
+    }
+  }, [dataInicio, dataFim]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await api.get("/downloads");
-        const data = response.data;
-        let intervalData = [];
-        let totalDownload = 0;
+    buscarDados();
+  }, [buscarDados]);
 
-        switch (selectedInterval) {
-          case "24h":
-            intervalData = [["Hora", "Download"]];
-            const today = new Date();
-            const twentyFourHoursAgo = new Date(
-              today.getTime() - 24 * 60 * 60 * 1000
-            );
-            const filteredData = data.filter(
-              (item) => new Date(item.date) >= twentyFourHoursAgo
-            );
-            filteredData.forEach((item) => {
-              const itemDate = new Date(item.date);
-              const formattedHour = `${itemDate.getHours()}:${
-                itemDate.getMinutes() < 10 ? "0" : ""
-              }${itemDate.getMinutes()}`;
-              const downloadValue =
-                item.download * 8 !== null
-                  ? Number(bpsToMBps(item.download * 8).toFixed(2))
-                  : 0;
-              intervalData.push([formattedHour, downloadValue]);
-              totalDownload += downloadValue;
-            });
-            break;
-          case "5d":
-          case "7d":
-          case "10d":
-          case "30d":
-            intervalData = [["Dia", "Download"]];
-            const numDays = parseInt(selectedInterval.slice(0, -1));
-            const todayDate = new Date();
-            const startDate = new Date(todayDate);
-            startDate.setDate(todayDate.getDate() - numDays + 1);
-            const filteredDaysData = data.filter((item) => {
-              const itemDate = new Date(item.date);
-              console.log(itemDate);
-              return itemDate >= startDate && itemDate <= todayDate;
-            });
-            const daysData = {};
-            filteredDaysData.forEach((item) => {
-              const itemDate = new Date(item.date).toLocaleDateString("pt-BR", {
-                day: "2-digit",
-                month: "2-digit",
-              });
-              if (!daysData[itemDate]) {
-                daysData[itemDate] = { sum: 0, count: 0 };
-              }
-              daysData[itemDate].sum +=
-                item.download * 8 !== null ? bpsToMBps(item.download * 8) : 0;
-              daysData[itemDate].count++;
-            });
-            Object.entries(daysData).forEach(([date, { sum, count }]) => {
-              intervalData.push([date, sum / count]);
-              totalDownload += sum / count;
-            });
-            break;
-          default:
-            break;
-        }
-
-        const avgDown = totalDownload / intervalData.length;
-        setaverageDownload(avgDown);
-        setChartData(intervalData);
-      } catch (error) {
-        console.error("Erro ao obter dados da API:", error);
-      }
-    };
-
-    fetchData();
-  }, [selectedInterval]);
-
-  const handleIntervalChange = (event) => {
-    setSelectedInterval(event.target.value);
+  const handleStartDateChange = (date) => {
+    setDataInicio(date);
   };
+
+  const handleEndDateChange = (date) => {
+    setDataFim(date);
+  };
+
+  const handleTimezoneChange = (selectedOption) => {
+    setFusoHorario(selectedOption.value);
+  };
+
+  const handleBuscarClick = () => {
+    buscarDados();
+  };
+
+  const handleMostrarMais = () => {
+    console.log(numResultados);
+    if (numResultados >= dados.length) {
+      setNumResultados(numResultados);
+    } else {
+      setNumResultados((prev) => prev + 10);
+    }
+  };
+
+  const opcoesFusoHorario = useMemo(
+    () => moment.tz.names().map((tz) => ({ value: tz, label: tz })),
+    []
+  );
+
+  const dadosLimitados = dados.slice(0, numResultados);
+
   return (
-    <Container style={{ marginTop: "20px" }} className="justify-content-center">
-      <div className="d-flex flex-column" style={{ marginBottom: "30px" }}>
-        <h2>
-          <p className="p-1 bd-highlight">
-            Download
-            <small className="smallsize">Mbps</small>
-          </p>
-        </h2>
-        <div className="d-flex flex-column bd-highlight mb-3 justify-content-center">
-          <label htmlFor="interval" className="text-center">
-            Selecione o Intervalo de Tempo:{" "}
-          </label>
-          <select
-            id="interval"
-            value={selectedInterval}
-            onChange={handleIntervalChange}
-            className="form-select text-center"
-            aria-label="intervalSelect"
+    <Container>
+      <Container
+        className="d-flex flex-row align-content-between flex-wrap align-items-center justify-content-between p-4 rounded-3"
+        style={{ textAlignLast: "center" }}
+      >
+        <Container
+          style={{ width: "13vw", margin: "0px" }}
+          className="d-flex flex-column flex-wrap align-content-center justify-content-center align-items-center"
+        >
+          <label htmlFor="startDate">Data de Início:</label>
+          <DatePicker
+            selected={dataInicio}
+            onChange={handleStartDateChange}
+            id="startDate"
+            className="form-control"
+          />
+          <label htmlFor="endDate">Data de Fim:</label>
+          <DatePicker
+            selected={dataFim}
+            onChange={handleEndDateChange}
+            id="endDate"
+            className="form-control"
+          />
+        </Container>
+        <Container className="w-25">
+          <label htmlFor="timezone">Fuso Horário:</label>
+          <Select
+            options={opcoesFusoHorario}
+            onChange={handleTimezoneChange}
+            defaultValue={{ value: fusoHorario, label: fusoHorario }}
+            aria-label="Selecionar Fuso Horário"
+          />
+        </Container>
+        <Container className="w-25">
+          <button
+            onClick={handleMostrarMais}
+            className="btn btn-light"
+            disabled={dadosLimitados.length < dados.length ? false : true}
           >
-            <option value="24h">Últimas 24 horas</option>
-            <option value="5d">Últimos 5 dias</option>
-            <option value="7d">Últimos 7 dias</option>
-            <option value="10d">Últimos 10 dias</option>
-            <option value="30d">Últimos 30 dias</option>
-          </select>
-        </div>
-        <p>
-          Média dos valores de downloads no intervalo selecionado:{" "}
-          {averageDownload !== null ? averageDownload.toFixed(2) : "-"} Mbps
-        </p>
-        {chartData != 0 ? (
-          <div className="chart-wrapper" style={{ border: "1px solid #000" }}>
-            <Chart
-              width={"100%"}
-              height={"400px"}
-              chartType="LineChart"
-              loader={<Loader />}
-              data={chartData}
-              options={{
-                title: `Download nos Últimos ${
-                  selectedInterval === "24h"
-                    ? "24 Horas"
-                    : selectedInterval === "5d"
-                    ? "5 Dias"
-                    : selectedInterval === "7d"
-                    ? "7 Dias"
-                    : selectedInterval === "10d"
-                    ? "10 Dias"
-                    : "30 Dias"
-                }`,
-                curveType: "function",
-                backgroundColor: {
-                  fill: "#f1f0f0",
-                },
-                legend: { position: "none" },
-              }}
-            />
-          </div>
-        ) : (
+            {dadosLimitados.length < dados.length
+              ? "Carregar Mais"
+              : "Máx. Atingido"}
+          </button>
+        </Container>
+        <Container className="w-25">
+          <button className="btn btn-light" onClick={handleBuscarClick}>
+            Buscar
+          </button>
+        </Container>
+      </Container>
+      {carregando ? (
+        <Container>
           <Loader />
-        )}
-      </div>
-      <div
-        style={{
-          borderBottom: "1px solid #b8b8b8",
-          marginTop: "20px",
-          marginBottom: "20px",
-        }}
-        className="mt-5"
-      ></div>
+        </Container>
+      ) : erro ? (
+        <Container className="text-center text-danger">{erro}</Container>
+      ) : dadosLimitados.length > 0 ? (
+        <>
+          <Chart
+            width={"100%"}
+            height={"400px"}
+            chartType="LineChart"
+            loader={
+              <Container>
+                <Loader />
+              </Container>
+            }
+            data={[
+              ["Hora", "Download (Mbps)"],
+              ...dadosLimitados.map((entry) => {
+                const date = moment
+                  .tz(entry.created_at, "YYYY-MM-DDTHH:mm:ss.SSSZ", "UTC")
+                  .tz(fusoHorario);
+                const hora = date.format("DD/MM HH:mm");
+                const downloadMbps = ((entry.download * 8) / 1000000).toFixed(
+                  2
+                );
+                return [hora, parseFloat(downloadMbps)];
+              }),
+            ]}
+            options={{
+              title: "Download (Mbps)",
+              curveType: "function",
+              legend: { position: "bottom" },
+              tooltip: { isHtml: true },
+            }}
+          />
+        </>
+      ) : (
+        <Container>Nenhum dado disponível</Container>
+      )}
     </Container>
   );
-}
+};
 
-export default DownloadResults;
+export default Grafico;

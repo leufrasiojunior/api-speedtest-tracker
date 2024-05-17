@@ -10,8 +10,8 @@ function StartPage() {
     <>
       <Home />
       <DownloadResults />
-      <UploadResults />
-      <PingResults />
+      {/* <UploadResults />
+      <PingResults /> */}
     </>
   );
 }
