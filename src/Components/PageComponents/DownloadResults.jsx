@@ -137,6 +137,14 @@ const Grafico = () => {
               ? "Carregar Mais"
               : "Máx. Atingido"}
           </button>
+          <span>
+            <br />
+            Mostrando {numResultados} de {dados.length} (
+            {numResultados / dados.length < 1
+              ? ((numResultados / dados.length) * 100).toFixed(2) + "%"
+              : "100%"}
+            )
+          </span>
         </Container>
         <Container className="w-25">
           <button className="btn btn-light" onClick={handleBuscarClick}>
